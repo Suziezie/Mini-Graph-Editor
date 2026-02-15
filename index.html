@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图论绘图工具 - Graph Editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="src/styles/main.css">
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header -->
+    <header class="bg-white shadow-lg border-b border-gray-200">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-project-diagram text-3xl text-purple-600"></i>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                        图论绘图工具
+                    </h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="exportBtn" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+                        <i class="fas fa-download mr-2"></i>导出
+                    </button>
+                    <button id="exportJsonBtn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                        <i class="fas fa-file-export mr-2"></i>导出JSON
+                    </button>
+                    <button id="importJsonBtn" class="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition">
+                        <i class="fas fa-file-import mr-2"></i>导入JSON
+                    </button>
+                    <input type="file" id="fileInput" accept=".json" style="display: none;">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-6">
+        <div class="grid grid-cols-12 gap-6">
+            <!-- 左侧工具栏 -->
+            <aside class="col-span-2">
+                <div class="bg-white rounded-xl shadow-lg p-4 sticky top-6">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-700">工具模式</h3>
+                    <div class="space-y-3">
+                        <button id="addNodeBtn" class="mode-btn w-full px-4 py-3 bg-gray-100 rounded-lg flex items-center justify-center space-x-2 hover:bg-gray-200">
+                            <i class="fas fa-circle-plus"></i>
+                            <span>添加/选中点</span>
+                        </button>
+                        <button id="addEdgeBtn" class="mode-btn w-full px-4 py-3 bg-gray-100 rounded-lg flex items-center justify-center space-x-2 hover:bg-gray-200">
+                            <i class="fas fa-arrow-right"></i>
+                            <span>添加/选中边</span>
+                        </button>
+                        <button id="deleteBtn" class="mode-btn w-full px-4 py-3 bg-gray-100 rounded-lg flex items-center justify-center space-x-2 hover:bg-gray-200">
+                            <i class="fas fa-trash"></i>
+                            <span>删除</span>
+                        </button>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <h3 class="text-lg font-semibold mb-4 text-gray-700">图类型</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="graphType" value="undirected" checked onchange="setGraphType('undirected')" class="text-purple-600">
+                            <span class="text-base">无向图</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="graphType" value="directed" onchange="setGraphType('directed')" class="text-purple-600">
+                            <span class="text-base">有向图</span>
+                        </label>
+                    </div>
+                    
+                    <!-- 图特性选项 -->
+                    <div class="mt-6 pt-4 border-t border-gray-200">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-700">图特性</h3>
+                        <div class="space-y-3">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="simpleGraph" class="text-blue-600 rounded" checked>
+                                <span class="text-base">简单图（无重边、无自环）</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="allowMultiEdges" class="text-blue-600 rounded">
+                                <span class="text-base">支持重边</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="allowSelfLoops" class="text-blue-600 rounded">
+                                <span class="text-base">支持自环</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <button id="clearCanvasBtn" class="w-full px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+                        <i class="fas fa-eraser mr-2"></i>清空画布
+                    </button>
+                    
+                    <button id="toggleModeBtn" class="w-full px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition mt-4">
+                        <i class="fas fa-sync-alt mr-2"></i>切换到微点模式
+                    </button>
+                </div>
+            </aside>
+
+            <!-- 中间画布区域 -->
+            <section class="col-span-8">
+                <div class="bg-white rounded-xl shadow-lg p-4">
+                    <svg id="canvas" width="100%" height="600" class="rounded-lg">
+                        <defs>
+                            <!-- 默认箭头定义 -->
+                            <marker id="arrowhead-default" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto" class="arrow-marker">
+                                <line x1="0" y1="3" x2="5" y2="3" stroke-width="1"/>
+                                <polygon points="5,1 8,3 5,5"/>
+                            </marker>
+                        </defs>
+                        <g id="edges"></g>
+                        <g id="nodes"></g>
+                    </svg>
+                </div>
+            </section>
+
+            <!-- 右侧属性面板 -->
+            <aside class="col-span-2">
+                <div class="bg-white rounded-xl shadow-lg p-4">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-700">属性面板</h3>
+                    <div id="propertyPanel" class="text-gray-500 text-center py-8">
+                        <i class="fas fa-mouse-pointer text-4xl mb-3"></i>
+                        <p>选择一个元素查看属性</p>
+                    </div>
+                </div>
+                
+            </aside>
+        </div>
+    </main>
+
+    <!-- 导出模态框 -->
+    <div id="exportModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="export-modal bg-white rounded-xl shadow-2xl p-6 w-96 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xl font-bold mb-4 text-gray-800">导出设置</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">导出格式</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button id="formatJpg" class="export-format-btn px-3 py-2 bg-gray-100 rounded-lg hover:bg-purple-100 transition">
+                            <i class="fas fa-image mr-1"></i>JPG
+                        </button>
+                        <button id="formatPng" class="export-format-btn px-3 py-2 bg-gray-100 rounded-lg hover:bg-purple-100 transition">
+                            <i class="fas fa-image mr-1"></i>PNG
+                        </button>
+                        <button id="formatSvg" class="export-format-btn px-3 py-2 bg-gray-100 rounded-lg hover:bg-purple-100 transition">
+                            <i class="fas fa-vector-square mr-1"></i>SVG
+                        </button>
+                        <button id="formatPdf" class="export-format-btn px-3 py-2 bg-gray-100 rounded-lg hover:bg-purple-100 transition">
+                            <i class="fas fa-file-pdf mr-1"></i>PDF
+                        </button>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">文件名</label>
+                    <input type="text" id="exportFileName" value="graph" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                
+                <div id="qualitySection">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">图片质量 (JPG)</label>
+                    <input type="range" id="exportQuality" min="0.1" max="1" step="0.1" value="0.9" class="w-full">
+                    <div class="flex justify-between text-xs text-gray-500">
+                        <span>低</span>
+                        <span id="qualityValue">0.9</span>
+                        <span>高</span>
+                    </div>
+                </div>
+                
+                <div id="backgroundSection">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">背景</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div id="bgWhite" class="bg-option bg-white border-2 border-gray-300 rounded-lg p-3 text-center">
+                            <div class="w-full h-8 bg-white border border-gray-300 rounded mb-1"></div>
+                            <span class="text-xs">白色</span>
+                        </div>
+                        <div id="bgTransparent" class="bg-option bg-gray-50 border-2 border-gray-300 rounded-lg p-3 text-center">
+                            <div class="w-full h-8 bg-gradient-to-br from-gray-200 to-gray-100 rounded mb-1 relative overflow-hidden">
+                                <div class="absolute inset-0" style="background-image: repeating-conic-gradient(#e5e7eb 0% 25%, transparent 0% 50%); background-size: 8px 8px;"></div>
+                            </div>
+                            <span class="text-xs">透明</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <button id="cancelExportBtn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
+                    取消
+                </button>
+                <button id="confirmExportBtn" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+                    <i class="fas fa-download mr-2"></i>导出
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 通知容器 -->
+    <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+    <!-- 右键菜单 -->
+    <div id="contextMenu" class="context-menu fixed bg-white rounded-lg shadow-xl py-2 hidden z-50">
+        <button id="editLabelBtn" class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2">
+            <i class="fas fa-edit"></i>
+            <span>编辑标签</span>
+        </button>
+        <button id="changeColorBtn" class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2">
+            <i class="fas fa-palette"></i>
+            <span>更改颜色</span>
+        </button>
+        <hr class="my-1">
+        <button id="deleteElementBtn" class="w-full px-4 py-2 text-left hover:bg-gray-100 text-red-600 flex items-center space-x-2">
+            <i class="fas fa-trash"></i>
+            <span>删除</span>
+        </button>
+    </div>
+
+    <!-- 外部依赖 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- 应用脚本 -->
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>

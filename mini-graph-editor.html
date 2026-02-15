@@ -1,0 +1,2685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图论绘图工具 - Graph Editor (离线完整版)</title>
+    <style>
+        /* 内联的FontAwesome图标字体基础样式 */
+        .fas, .far, .fal, .fad, .fab {
+            font-family: 'Font Awesome 6 Free', 'Font Awesome 6 Free', sans-serif;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-font-smoothing: antialiased;
+            display: inline-block;
+            font-style: normal;
+            font-variant: normal;
+            text-rendering: auto;
+            line-height: 1;
+            font-weight: 900;
+        }
+        
+        /* 内联的Tailwind CSS核心样式 */
+        *, ::before, ::after {
+            box-sizing: border-box;
+            border-width: 0;
+            border-style: solid;
+            border-color: #e5e7eb;
+        }
+        
+        ::before, ::after {
+            --tw-content: '';
+        }
+        
+        html {
+            line-height: 1.5;
+            -webkit-text-size-adjust: 100%;
+            -moz-tab-size: 4;
+            tab-size: 4;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+        
+        body {
+            margin: 0;
+            line-height: inherit;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+        
+        hr {
+            height: 0;
+            color: inherit;
+            border-top-width: 1px;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-size: inherit;
+            font-weight: inherit;
+        }
+        
+        a {
+            color: inherit;
+            text-decoration: inherit;
+        }
+        
+        b, strong {
+            font-weight: bolder;
+        }
+        
+        button, input, optgroup, select, textarea {
+            font-family: inherit;
+            font-size: 100%;
+            font-weight: inherit;
+            line-height: inherit;
+            color: inherit;
+            margin: 0;
+            padding: 0;
+        }
+        
+        button, select {
+            text-transform: none;
+        }
+        
+        button, [type='button'], [type='reset'], [type='submit'] {
+            -webkit-appearance: button;
+            background-color: transparent;
+            background-image: none;
+        }
+        
+        :-moz-focusring {
+            outline: auto;
+        }
+        
+        :-moz-ui-invalid {
+            box-shadow: none;
+        }
+        
+        progress {
+            vertical-align: baseline;
+        }
+        
+        ::-webkit-inner-spin-button, ::-webkit-outer-spin-button {
+            height: auto;
+        }
+        
+        [type='search'] {
+            -webkit-appearance: textfield;
+            outline-offset: -2px;
+        }
+        
+        ::-webkit-search-decoration {
+            -webkit-appearance: none;
+        }
+        
+        ::-webkit-file-upload-button {
+            -webkit-appearance: button;
+            font: inherit;
+        }
+        
+        summary {
+            display: list-item;
+        }
+        
+        blockquote, dl, dd, h1, h2, h3, h4, h5, h6, hr, figure, p, pre {
+            margin: 0;
+        }
+        
+        fieldset {
+            margin: 0;
+            padding: 0;
+        }
+        
+        legend {
+            padding: 0;
+        }
+        
+        ol, ul, menu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        dialog {
+            padding: 0;
+        }
+        
+        textarea {
+            resize: vertical;
+        }
+        
+        input::placeholder, textarea::placeholder {
+            opacity: 1;
+            color: #9ca3af;
+        }
+        
+        button, [role="button"] {
+            cursor: pointer;
+        }
+        
+        :disabled {
+            cursor: default;
+        }
+        
+        img, svg, video, canvas, audio, iframe, embed, object {
+            display: block;
+            vertical-align: middle;
+        }
+        
+        img, video {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        [hidden] {
+            display: none;
+        }
+        
+        /* Tailwind实用类 */
+        .container {
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        
+        @media (min-width: 640px) {
+            .container {
+                max-width: 640px;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .container {
+                max-width: 768px;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 1024px;
+            }
+        }
+        
+        @media (min-width: 1280px) {
+            .container {
+                max-width: 1280px;
+            }
+        }
+        
+        @media (min-width: 1536px) {
+            .container {
+                max-width: 1536px;
+            }
+        }
+        
+        .mx-auto {
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .my-4 {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .mt-4 {
+            margin-top: 1rem;
+        }
+        
+        .mb-3 {
+            margin-bottom: 0.75rem;
+        }
+        
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+        
+        .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+        
+        .space-y-2 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-y-reverse: 0;
+            margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
+            margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
+        }
+        
+        .space-y-3 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-y-reverse: 0;
+            margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
+            margin-bottom: calc(0.75rem * var(--tw-space-y-reverse));
+        }
+        
+        .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-y-reverse: 0;
+            margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+            margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+        }
+        
+        .space-x-2 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-x-reverse: 0;
+            margin-right: calc(0.5rem * var(--tw-space-x-reverse));
+            margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
+        }
+        
+        .space-x-3 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-x-reverse: 0;
+            margin-right: calc(0.75rem * var(--tw-space-x-reverse));
+            margin-left: calc(0.75rem * calc(1 - var(--tw-space-x-reverse)));
+        }
+        
+        .space-x-4 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-x-reverse: 0;
+            margin-right: calc(1rem * var(--tw-space-x-reverse));
+            margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
+        }
+        
+        .flex {
+            display: flex;
+        }
+        
+        .inline-flex {
+            display: inline-flex;
+        }
+        
+        .grid {
+            display: grid;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .h-10 {
+            height: 2.5rem;
+        }
+        
+        .h-full {
+            height: 100%;
+        }
+        
+        .h-screen {
+            height: 100vh;
+        }
+        
+        .w-full {
+            width: 100%;
+        }
+        
+        .w-64 {
+            width: 16rem;
+        }
+        
+        .flex-1 {
+            flex: 1 1 0%;
+        }
+        
+        .grid-cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        
+        .grid-cols-4 {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+        
+        .grid-cols-12 {
+            grid-template-columns: repeat(12, minmax(0, 1fr));
+        }
+        
+        .flex-col {
+            flex-direction: column;
+        }
+        
+        .items-center {
+            align-items: center;
+        }
+        
+        .justify-center {
+            justify-content: center;
+        }
+        
+        .justify-between {
+            justify-content: space-between;
+        }
+        
+        .gap-6 {
+            gap: 1.5rem;
+        }
+        
+        .gap-2 {
+            gap: 0.5rem;
+        }
+        
+        .overflow-hidden {
+            overflow: hidden;
+        }
+        
+        .overflow-y-auto {
+            overflow-y: auto;
+        }
+        
+        .rounded-lg {
+            border-radius: 0.5rem;
+        }
+        
+        .rounded-xl {
+            border-radius: 0.75rem;
+        }
+        
+        .border {
+            border-width: 1px;
+        }
+        
+        .border-b {
+            border-bottom-width: 1px;
+        }
+        
+        .border-t {
+            border-top-width: 1px;
+        }
+        
+        .border-gray-200 {
+            border-color: #e5e7eb;
+        }
+        
+        .bg-white {
+            background-color: #fff;
+        }
+        
+        .bg-gray-50 {
+            background-color: #f9fafb;
+        }
+        
+        .bg-gray-100 {
+            background-color: #f3f4f6;
+        }
+        
+        .bg-purple-500 {
+            background-color: #8b5cf6;
+        }
+        
+        .bg-purple-600 {
+            background-color: #9333ea;
+        }
+        
+        .bg-red-500 {
+            background-color: #ef4444;
+        }
+        
+        .bg-green-500 {
+            background-color: #22c55e;
+        }
+        
+        .bg-blue-500 {
+            background-color: #3b82f6;
+        }
+        
+        .bg-yellow-500 {
+            background-color: #eab308;
+        }
+        
+        .bg-indigo-500 {
+            background-color: #6366f1;
+        }
+        
+        .bg-black {
+            background-color: #000;
+        }
+        
+        .bg-opacity-50 {
+            background-color: rgb(0 0 0 / 0.5);
+        }
+        
+        .p-4 {
+            padding: 1rem;
+        }
+        
+        .p-6 {
+            padding: 1.5rem;
+        }
+        
+        .px-2 {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+        
+        .px-3 {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+        
+        .px-4 {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        
+        .py-1 {
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+        }
+        
+        .py-2 {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+        
+        .py-3 {
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+        }
+        
+        .py-4 {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        
+        .py-6 {
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+        
+        .py-8 {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        
+        .text-left {
+            text-align: left;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .text-2xl {
+            font-size: 1.5rem;
+            line-height: 2rem;
+        }
+        
+        .text-4xl {
+            font-size: 2.25rem;
+            line-height: 2.5rem;
+        }
+        
+        .text-lg {
+            font-size: 1.125rem;
+            line-height: 1.75rem;
+        }
+        
+        .text-sm {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+        
+        .text-xs {
+            font-size: 0.75rem;
+            line-height: 1rem;
+        }
+        
+        .font-bold {
+            font-weight: 700;
+        }
+        
+        .font-semibold {
+            font-weight: 600;
+        }
+        
+        .font-medium {
+            font-weight: 500;
+        }
+        
+        .leading-relaxed {
+            line-height: 1.625;
+        }
+        
+        .tracking-wide {
+            letter-spacing: 0.025em;
+        }
+        
+        .text-white {
+            color: #fff;
+        }
+        
+        .text-gray-500 {
+            color: #6b7280;
+        }
+        
+        .text-gray-600 {
+            color: #4b5563;
+        }
+        
+        .text-gray-700 {
+            color: #374151;
+        }
+        
+        .text-purple-600 {
+            color: #9333ea;
+        }
+        
+        .text-red-600 {
+            color: #dc2626;
+        }
+        
+        .shadow-lg {
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        
+        .transition {
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+        
+        /* 工具模式按钮样式 */
+        .mode-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .mode-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .mode-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .hover\:bg-gray-200:hover {
+            background-color: #e5e7eb;
+        }
+        
+        .hover\:bg-red-600:hover {
+            background-color: #dc2626;
+        }
+        
+        .hover\:bg-green-600:hover {
+            background-color: #16a34a;
+        }
+        
+        .hover\:bg-blue-600:hover {
+            background-color: #2563eb;
+        }
+        
+        .hover\:bg-purple-600:hover {
+            background-color: #9333ea;
+        }
+        
+        .hover\:bg-indigo-600:hover {
+            background-color: #4f46e5;
+        }
+        
+        .focus\:outline-none:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+        }
+        
+        .focus\:ring-1:focus {
+            --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+            --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+        }
+        
+        .focus\:ring-2:focus {
+            --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+            --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+        }
+        
+        .focus\:ring-purple-500:focus {
+            --tw-ring-opacity: 1;
+            --tw-ring-color: rgb(168 85 247 / var(--tw-ring-opacity));
+        }
+        
+        .focus\:ring-purple-600:focus {
+            --tw-ring-opacity: 1;
+            --tw-ring-color: rgb(147 51 234 / var(--tw-ring-opacity));
+        }
+        
+        .col-span-2 {
+            grid-column: span 2 / span 2;
+        }
+        
+        .col-span-8 {
+            grid-column: span 8 / span 8;
+        }
+        
+        .sticky {
+            position: sticky;
+        }
+        
+        .top-6 {
+            top: 1.5rem;
+        }
+        
+        .z-50 {
+            z-index: 50;
+        }
+        
+        .top-4 {
+            top: 1rem;
+        }
+        
+        .right-4 {
+            right: 1rem;
+        }
+        
+        .fixed {
+            position: fixed;
+        }
+        
+        .inset-0 {
+            top: 0px;
+            right: 0px;
+            bottom: 0px;
+            left: 0px;
+        }
+        
+        /* FontAwesome图标模拟 */
+        .fa-project-diagram::before { content: "📊"; }
+        .fa-circle-plus::before { content: "⭕"; }
+        .fa-arrow-right::before { content: "➡️"; }
+        .fa-trash::before { content: "🗑️"; }
+        .fa-download::before { content: "📥"; }
+        .fa-file-export::before { content: "📤"; }
+        .fa-file-import::before { content: "📥"; }
+        .fa-eraser::before { content: "🧹"; }
+        .fa-sync-alt::before { content: "🔄"; }
+        .fa-mouse-pointer::before { content: "👆"; }
+        .fa-edit::before { content: "✏️"; }
+        .fa-palette::before { content: "🎨"; }
+        .export-format-btn.active {
+            background-color: #8b5cf6 !important;
+            color: white !important;
+        }
+        .bg-option.selected {
+            border-color: #8b5cf6 !important;
+            border-width: 3px !important;
+        }
+        .arrow-marker polygon {
+            fill: currentColor;
+        }
+        .arrow-marker line {
+            stroke: currentColor;
+        }
+        .node.selected circle {
+            filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.8));
+        }
+        .node.connected circle {
+            stroke: #f59e0b;
+            stroke-width: 2px;
+            stroke-dasharray: 4,2;
+        }
+        .edge.selected line, .edge.selected path {
+            stroke: #8b5cf6;
+            stroke-width: 6px;
+            filter: drop-shadow(0 0 6px rgba(139, 92, 246, 0.8));
+        }
+        .edge line, .edge path {
+            stroke-width: 4px;
+        }
+        
+        /* 边的悬停效果 */
+        .edge line, .edge path {
+            stroke-width: 4px;
+            transition: stroke-width 0.2s;
+        }
+        
+        .edge:hover line, .edge:hover path {
+            stroke-width: 6px;
+        }
+        
+        .edge.no-hover:hover line, .edge.no-hover:hover path {
+            stroke-width: 4px;
+        }
+        
+        /* 边的点击响应区域 */
+        .edge-hit-area {
+            stroke-width: 16;
+            stroke: transparent;
+            fill: none;
+            cursor: pointer;
+            pointer-events: stroke;
+        }
+        
+        .color-option {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            border: 2px solid transparent;
+        }
+        .color-option:hover {
+            transform: scale(1.1);
+            border-color: #8b5cf6;
+        }
+        .color-option.selected {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+        .shape-option {
+            display: inline-block;
+            margin: 0 5px;
+            cursor: pointer;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .shape-option.selected {
+            border: 2px solid #8b5cf6;
+        }
+        .toast {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        .edge.selected line, .edge.selected path {
+            stroke: #8b5cf6;
+            stroke-width: 6px;
+            filter: drop-shadow(0 0 6px rgba(139, 92, 246, 0.8));
+        }
+        .edge line, .edge path {
+            stroke-width: 4px;
+        }
+        .color-option.selected {
+            border: 3px solid #8b5cf6;
+        }
+        .shape-option.selected {
+            border: 3px solid #8b5cf6;
+        }
+        .context-menu {
+            min-width: 160px;
+        }
+        .toast {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        /* 颜色选择器样式 */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .color-option {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .color-option:hover {
+            border-color: #d1d5db;
+        }
+        /* 形状选择器样式 */
+        .shape-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .shape-option {
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            text-align: center;
+        }
+        .shape-option:hover {
+            border-color: #8b5cf6;
+        }
+        
+        /* 画布样式 */
+        #canvas {
+            cursor: crosshair;
+            background: linear-gradient(to bottom right, #f8fafc, #e2e8f0);
+            background-image: 
+                radial-gradient(circle, #cbd5e1 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header -->
+    <header class="bg-white shadow-lg border-b border-gray-200">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-project-diagram text-3xl text-purple-600"></i>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                        图论绘图工具 (离线完整版)
+                    </h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="exportBtn" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition inline-flex items-center">
+                        <i class="fas fa-download mr-2"></i>导出
+                    </button>
+                    <button id="exportJsonBtn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition inline-flex items-center">
+                        <i class="fas fa-file-export mr-2"></i>导出JSON
+                    </button>
+                    <button id="importJsonBtn" class="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition inline-flex items-center">
+                        <i class="fas fa-file-import mr-2"></i>导入JSON
+                    </button>
+                    <input type="file" id="fileInput" accept=".json" style="display: none;">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-6">
+        <div class="grid grid-cols-12 gap-6">
+            <!-- 左侧工具栏 -->
+            <aside class="col-span-2">
+                <div class="bg-white rounded-xl shadow-lg p-4 sticky top-6">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-700">工具模式</h3>
+                    <div class="space-y-3">
+                        <button id="addNodeBtn" class="mode-btn w-full px-4 py-3 bg-gray-100 rounded-lg flex items-center justify-center space-x-2 hover:bg-gray-200">
+                            <i class="fas fa-circle-plus"></i>
+                            <span>添加/选中点</span>
+                        </button>
+                        <button id="addEdgeBtn" class="mode-btn w-full px-4 py-3 bg-gray-100 rounded-lg flex items-center justify-center space-x-2 hover:bg-gray-200">
+                            <i class="fas fa-arrow-right"></i>
+                            <span>添加/选中边</span>
+                        </button>
+                        <button id="deleteBtn" class="mode-btn w-full px-4 py-3 bg-gray-100 rounded-lg flex items-center justify-center space-x-2 hover:bg-gray-200">
+                            <i class="fas fa-trash"></i>
+                            <span>删除</span>
+                        </button>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <h3 class="text-lg font-semibold mb-4 text-gray-700">图类型</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="graphType" value="undirected" checked class="text-purple-600">
+                            <span class="text-base">无向图</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="graphType" value="directed" class="text-purple-600">
+                            <span class="text-base">有向图</span>
+                        </label>
+                    </div>
+                    
+                    <!-- 图特性选项 -->
+                    <div class="mt-6 pt-4 border-t border-gray-200">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-700">图特性</h3>
+                        <div class="space-y-3">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="simpleGraph" class="text-blue-600 rounded" checked>
+                                <span class="text-base">简单图（无重边、无自环）</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="allowMultiEdges" class="text-blue-600 rounded">
+                                <span class="text-base">支持重边</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="allowSelfLoops" class="text-blue-600 rounded">
+                                <span class="text-base">支持自环</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <button id="clearCanvasBtn" class="w-full px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+                        <i class="fas fa-eraser mr-2"></i>清空画布
+                    </button>
+                    
+                    <button id="toggleModeBtn" class="w-full px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition mt-4">
+                        <i class="fas fa-sync-alt mr-2"></i>切换到微点模式
+                    </button>
+                </div>
+            </aside>
+
+            <!-- 中间画布区域 -->
+            <section class="col-span-8">
+                <div class="bg-white rounded-xl shadow-lg p-4">
+                    <svg id="canvas" width="100%" height="600" class="canvas-background">
+                        <defs>
+                            <!-- 默认箭头定义 -->
+                            <marker id="arrowhead-default" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto" class="arrow-marker">
+                                <line x1="0" y1="3" x2="5" y2="3" stroke-width="1"/>
+                                <polygon points="5,1 8,3 5,5"/>
+                            </marker>
+                        </defs>
+                        <g id="edges"></g>
+                        <g id="nodes"></g>
+                    </svg>
+                </div>
+            </section>
+
+            <!-- 右侧属性面板 -->
+            <aside class="col-span-2">
+                <div class="bg-white rounded-xl shadow-lg p-4">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-700">属性面板</h3>
+                    <div id="propertyPanel" class="text-gray-500 text-center py-8">
+                        <i class="fas fa-mouse-pointer text-4xl mb-3"></i>
+                        <p>选择一个元素查看属性</p>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- 导出模态框 -->
+    <div id="exportModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="export-modal bg-white rounded-xl shadow-2xl p-6 w-96 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xl font-bold mb-4 text-gray-800">导出设置</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">导出格式</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button id="formatJpg" class="export-format-btn px-3 py-2 bg-gray-100 rounded-lg hover:bg-purple-100 transition">
+                            <i class="fas fa-image mr-1"></i>JPG
+                        </button>
+                        <button id="formatPng" class="export-format-btn px-3 py-2 bg-gray-100 rounded-lg hover:bg-purple-100 transition">
+                            <i class="fas fa-image mr-1"></i>PNG
+                        </button>
+                        <button id="formatSvg" class="export-format-btn px-3 py-2 bg-gray-100 rounded-lg hover:bg-purple-100 transition">
+                            <i class="fas fa-vector-square mr-1"></i>SVG
+                        </button>
+                        <button id="formatPdf" class="export-format-btn px-3 py-2 bg-gray-100 rounded-lg hover:bg-purple-100 transition">
+                            <i class="fas fa-file-pdf mr-1"></i>PDF
+                        </button>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">文件名</label>
+                    <input type="text" id="exportFileName" value="graph" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                
+                <div id="qualitySection">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">图片质量 (JPG)</label>
+                    <input type="range" id="exportQuality" min="0.1" max="1" step="0.1" value="0.9" class="w-full">
+                    <div class="flex justify-between text-xs text-gray-500">
+                        <span>低</span>
+                        <span id="qualityValue">0.9</span>
+                        <span>高</span>
+                    </div>
+                </div>
+                
+                <div id="backgroundSection">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">背景</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div id="bgWhite" class="bg-option bg-white border-2 border-gray-300 rounded-lg p-3 text-center">
+                            <div class="w-full h-8 bg-white border border-gray-300 rounded mb-1"></div>
+                            <span class="text-xs">白色</span>
+                        </div>
+                        <div id="bgTransparent" class="bg-option bg-gray-50 border-2 border-gray-300 rounded-lg p-3 text-center">
+                            <div class="w-full h-8 bg-gradient-to-br from-gray-200 to-gray-100 rounded mb-1 relative overflow-hidden">
+                                <div class="absolute inset-0" style="background-image: repeating-conic-gradient(#e5e7eb 0% 25%, transparent 0% 50%); background-size: 8px 8px;"></div>
+                            </div>
+                            <span class="text-xs">透明</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <button id="cancelExportBtn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
+                    取消
+                </button>
+                <button id="confirmExportBtn" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+                    <i class="fas fa-download mr-2"></i>导出
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 通知容器 -->
+    <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+    <!-- 右键菜单 -->
+    <div id="contextMenu" class="context-menu fixed bg-white rounded-lg shadow-xl py-2 hidden z-50">
+        <button id="editLabelBtn" class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2">
+            <i class="fas fa-edit"></i>
+            <span>编辑标签</span>
+        </button>
+        <button id="changeColorBtn" class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2">
+            <i class="fas fa-palette"></i>
+            <span>更改颜色</span>
+        </button>
+        <hr class="my-1">
+        <button id="deleteElementBtn" class="w-full px-4 py-2 text-left hover:bg-gray-100 text-red-600 flex items-center space-x-2">
+            <i class="fas fa-trash"></i>
+            <span>删除</span>
+        </button>
+    </div>
+
+    <script>
+        // 复用原有代码结构，创建完全一致的离线版本
+        
+        // ==================== 数据模型 ====================
+        class Node {
+            constructor(id, x, y, label = '', color = '#000000', shape = 'circle') {
+                this.id = id;
+                this.x = x;
+                this.y = y;
+                this.label = label;
+                this.color = color;
+                this.shape = shape;
+            }
+            
+            setPosition(x, y) {
+                this.x = x;
+                this.y = y;
+            }
+            
+            setLabel(label) {
+                this.label = label;
+            }
+            
+            setColor(color) {
+                this.color = color;
+            }
+            
+            setShape(shape) {
+                this.shape = shape;
+            }
+            
+            clone() {
+                return new Node(this.id, this.x, this.y, this.label, this.color, this.shape);
+            }
+            
+            toJSON() {
+                return {
+                    id: this.id,
+                    x: this.x,
+                    y: this.y,
+                    label: this.label,
+                    color: this.color,
+                    shape: this.shape
+                };
+            }
+            
+            static fromJSON(json) {
+                return new Node(json.id, json.x, json.y, json.label, json.color, json.shape);
+            }
+        }
+
+        class Edge {
+            constructor(id, sourceId, targetId, weight = 1, label = '', color = '#000000') {
+                this.id = id;
+                this.sourceId = sourceId;
+                this.targetId = targetId;
+                this.weight = weight;
+                this.label = label;
+                this.color = color;
+            }
+            
+            setLabel(label) {
+                this.label = label;
+            }
+            
+            setWeight(weight) {
+                this.weight = weight;
+            }
+            
+            setColor(color) {
+                this.color = color;
+            }
+            
+            clone() {
+                return new Edge(this.id, this.sourceId, this.targetId, this.weight, this.label, this.color);
+            }
+            
+            toJSON() {
+                return {
+                    id: this.id,
+                    source: this.sourceId,
+                    target: this.targetId,
+                    weight: this.weight,
+                    label: this.label,
+                    color: this.color
+                };
+            }
+            
+            static fromJSON(json) {
+                return new Edge(json.id, json.source, json.target, json.weight, json.label, json.color);
+            }
+        }
+
+        class Graph {
+            constructor(directed = false) {
+                this.nodes = [];
+                this.edges = [];
+                this.directed = directed;
+                this.nodeIdCounter = 1;
+                this.edgeIdCounter = 1;
+            }
+            
+            addNode(x, y, label = null, color = '#000000', shape = 'circle') {
+                const nodeId = `node_${this.nodeIdCounter++}`;
+                const nodeLabel = label || `V${this.nodeIdCounter - 1}`;
+                const node = new Node(nodeId, x, y, nodeLabel, color, shape);
+                this.nodes.push(node);
+                return node;
+            }
+            
+            addEdge(sourceId, targetId, weight = 1, label = '') {
+                if (!this.getNode(sourceId) || !this.getNode(targetId)) {
+                    throw new Error('源节点或目标节点不存在');
+                }
+                
+                const edgeId = `edge_${this.edgeIdCounter++}`;
+                const edge = new Edge(edgeId, sourceId, targetId, weight, label);
+                this.edges.push(edge);
+                return edge;
+            }
+            
+            getNode(nodeId) {
+                return this.nodes.find(node => node.id === nodeId);
+            }
+            
+            getEdge(edgeId) {
+                return this.edges.find(edge => edge.id === edgeId);
+            }
+            
+            /**
+             * 获取与节点相连的所有边
+             */
+            getEdgesForNode(nodeId) {
+                return this.edges.filter(edge => 
+                    edge.sourceId === nodeId || edge.targetId === nodeId
+                );
+            }
+            
+            /**
+             * 获取两个节点之间的所有边
+             */
+            getEdgesBetween(sourceId, targetId) {
+                return this.edges.filter(edge => 
+                    (edge.sourceId === sourceId && edge.targetId === targetId) ||
+                    (!this.directed && edge.sourceId === targetId && edge.targetId === sourceId)
+                );
+            }
+            
+            deleteNode(nodeId) {
+                this.edges = this.edges.filter(edge => 
+                    edge.sourceId !== nodeId && edge.targetId !== nodeId
+                );
+                this.nodes = this.nodes.filter(node => node.id !== nodeId);
+            }
+            
+            deleteEdge(edgeId) {
+                this.edges = this.edges.filter(edge => edge.id !== edgeId);
+            }
+            
+            clear() {
+                this.nodes = [];
+                this.edges = [];
+                this.nodeIdCounter = 1;
+                this.edgeIdCounter = 1;
+            }
+            
+            setDirected(directed) {
+                this.directed = directed;
+            }
+            
+            toJSON() {
+                return {
+                    nodes: this.nodes.map(node => node.toJSON()),
+                    edges: this.edges.map(edge => edge.toJSON()),
+                    directed: this.directed
+                };
+            }
+            
+            static fromJSON(json) {
+                const graph = new Graph(json.directed);
+                graph.nodes = json.nodes.map(nodeData => Node.fromJSON(nodeData));
+                graph.edges = json.edges.map(edgeData => Edge.fromJSON(edgeData));
+                
+                if (graph.nodes.length > 0) {
+                    const maxNodeId = Math.max(...graph.nodes.map(n => parseInt(n.id.split('_')[1])));
+                    graph.nodeIdCounter = maxNodeId + 1;
+                }
+                
+                if (graph.edges.length > 0) {
+                    const maxEdgeId = Math.max(...graph.edges.map(e => parseInt(e.id.split('_')[1])));
+                    graph.edgeIdCounter = maxEdgeId + 1;
+                }
+                
+                return graph;
+            }
+        }
+
+        // ==================== 工具类 ====================
+        class ColorUtils {
+            static COMMON_COLORS = [
+                '#000000', '#6b7280', '#ef4444', '#eab308',
+                '#3b82f6', '#8b5cf6', '#10b981', '#ec4899'
+            ];
+            
+            static getContrastTextColor(backgroundColor) {
+                const hex = backgroundColor.replace('#', '');
+                const r = parseInt(hex.substr(0, 2), 16);
+                const g = parseInt(hex.substr(2, 2), 16);
+                const b = parseInt(hex.substr(4, 2), 16);
+                const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+                return brightness > 128 ? '#000000' : '#FFFFFF';
+            }
+        }
+
+        class StorageUtils {
+            static PREFIX = 'mini-graph-editor-';
+            
+            static save(key, data) {
+                try {
+                    const serializedData = JSON.stringify(data);
+                    localStorage.setItem(this.PREFIX + key, serializedData);
+                    return true;
+                } catch (error) {
+                    console.error('保存数据失败:', error);
+                    return false;
+                }
+            }
+            
+            static load(key) {
+                try {
+                    const serializedData = localStorage.getItem(this.PREFIX + key);
+                    return serializedData ? JSON.parse(serializedData) : null;
+                } catch (error) {
+                    console.error('加载数据失败:', error);
+                    return null;
+                }
+            }
+        }
+
+        // ==================== 主应用类 ====================
+        class GraphEditor {
+            constructor() {
+                this.graph = new Graph();
+                this.svgElement = document.getElementById('canvas');
+                this.nodesGroup = document.getElementById('nodes');
+                this.edgesGroup = document.getElementById('edges');
+                
+                // 模式
+                this.currentMode = 'addNode';
+                this.graphMode = 'circle';
+                
+                // 图类型和特性
+                this.graphType = 'undirected';
+                this.graphFeatures = {
+                    simple: true,
+                    allowMultiEdges: false,
+                    allowSelfLoops: false
+                };
+                
+                // 当前状态
+                this.selectedNode = null;
+                this.selectedEdge = null;
+                this.edgeStart = null;
+                this.isDragging = false;
+                this.draggedNode = null;
+                this.cleanupDragListeners = null;
+                
+                // UI组件引用
+                this.propertyPanel = document.getElementById('propertyPanel');
+                
+                this.initialize();
+            }
+            
+            initialize() {
+                this.setupEventListeners();
+                this.loadSavedState();
+                this.showToast('离线完整版应用已加载', 'success');
+            }
+            
+            setupEventListeners() {
+                // 模式按钮
+                document.getElementById('addNodeBtn').addEventListener('click', () => this.setMode('addNode'));
+                document.getElementById('addEdgeBtn').addEventListener('click', () => this.setMode('addEdge'));
+                document.getElementById('deleteBtn').addEventListener('click', () => this.setMode('delete'));
+                
+                // 图类型切换
+                document.querySelectorAll('input[name="graphType"]').forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        this.graphType = e.target.value;
+                        this.graph.setDirected(this.graphType === 'directed');
+                        this.renderGraph();
+                        this.saveCurrentState();
+                        this.showToast(`图类型已设置为${this.graphType === 'directed' ? '有向图' : '无向图'}`, 'success');
+                    });
+                });
+                
+                // 图特性选项
+                document.getElementById('simpleGraph').addEventListener('change', (e) => {
+                    this.graphFeatures.simple = e.target.checked;
+                    this.updateFeatureControls();
+                    this.saveCurrentState();
+                });
+                
+                document.getElementById('allowMultiEdges').addEventListener('change', (e) => {
+                    this.graphFeatures.allowMultiEdges = e.target.checked;
+                    if (!this.graphFeatures.simple) {
+                        this.showToast(e.target.checked ? '已启用重边支持' : '已禁用重边支持', 'info');
+                    }
+                    this.saveCurrentState();
+                });
+                
+                document.getElementById('allowSelfLoops').addEventListener('change', (e) => {
+                    this.graphFeatures.allowSelfLoops = e.target.checked;
+                    if (!this.graphFeatures.simple) {
+                        this.showToast(e.target.checked ? '已启用自环支持' : '已禁用自环支持', 'info');
+                    }
+                    this.saveCurrentState();
+                });
+                
+                // Canvas事件
+                this.svgElement.addEventListener('click', (e) => this.handleCanvasClick(e));
+                
+                // 键盘事件
+                document.addEventListener('keydown', (e) => this.handleKeyDown(e));
+                
+                // 导出/导入
+                document.getElementById('exportBtn').addEventListener('click', () => this.showExportModal());
+                document.getElementById('exportJsonBtn').addEventListener('click', () => this.exportJSON());
+                document.getElementById('importJsonBtn').addEventListener('click', () => document.getElementById('fileInput').click());
+                document.getElementById('fileInput').addEventListener('change', (e) => this.importJSON(e));
+                
+                // 其他按钮
+                document.getElementById('clearCanvasBtn').addEventListener('click', () => this.clearCanvas());
+                document.getElementById('toggleModeBtn').addEventListener('click', () => this.toggleGraphMode());
+                
+                // 属性面板删除按钮（事件委托）
+                document.addEventListener('click', (e) => {
+                    if (e.target.id === 'deleteElementBtn' || e.target.closest('#deleteElementBtn')) {
+                        if (this.selectedEdge) {
+                            this.graph.deleteEdge(this.selectedEdge.id);
+                            this.renderGraph();
+                            this.selectedEdge = null;
+                            this.clearVisualSelection();
+                        } else if (this.selectedNode) {
+                            this.graph.deleteNode(this.selectedNode.id);
+                            this.renderGraph();
+                            this.selectedNode = null;
+                            this.clearVisualSelection();
+                        }
+                        this.saveCurrentState();
+                    }
+                });
+                
+                this.updateFeatureControls();
+            }
+            
+            setMode(mode) {
+                this.currentMode = mode;
+                document.querySelectorAll('.mode-btn').forEach(btn => {
+                    btn.classList.remove('active', 'bg-purple-600', 'text-white');
+                    btn.classList.add('bg-gray-100');
+                });
+                
+                const activeBtn = document.getElementById(`${mode}Btn`);
+                if (activeBtn) {
+                    activeBtn.classList.add('active', 'bg-purple-600', 'text-white');
+                    activeBtn.classList.remove('bg-gray-100');
+                }
+                
+                // 设置边的悬停效果
+                this.setEdgesHoverEffect(mode === 'addEdge' || mode === 'delete');
+                
+                // 重置边起始点
+                if (mode !== 'addEdge') {
+                    this.edgeStart = null;
+                }
+            }
+            
+            setEdgesHoverEffect(enable) {
+                const edges = this.edgesGroup.querySelectorAll('.edge');
+                edges.forEach(edge => {
+                    if (enable) {
+                        edge.classList.remove('no-hover');
+                    } else {
+                        edge.classList.add('no-hover');
+                    }
+                });
+            }
+            
+            updateFeatureControls() {
+                const simpleCheckbox = document.getElementById('simpleGraph');
+                const multiEdgesCheckbox = document.getElementById('allowMultiEdges');
+                const selfLoopsCheckbox = document.getElementById('allowSelfLoops');
+                
+                if (this.graphFeatures.simple) {
+                    multiEdgesCheckbox.checked = false;
+                    multiEdgesCheckbox.disabled = true;
+                    selfLoopsCheckbox.checked = false;
+                    selfLoopsCheckbox.disabled = true;
+                } else {
+                    multiEdgesCheckbox.disabled = false;
+                    selfLoopsCheckbox.disabled = false;
+                }
+            }
+            
+            handleCanvasClick(event) {
+                if (this.currentMode === 'addNode') {
+                    const rect = this.svgElement.getBoundingClientRect();
+                    const x = event.clientX - rect.left;
+                    const y = event.clientY - rect.top;
+                    this.addNode(x, y);
+                }
+            }
+            
+            addNode(x, y) {
+                const node = this.graph.addNode(x, y);
+                this.renderGraph();
+                this.selectNode(node);
+                this.saveCurrentState();
+            }
+            
+            addEdge(sourceNode, targetNode) {
+                // 检查简单图约束
+                if (this.graphFeatures.simple) {
+                    if (sourceNode.id === targetNode.id) {
+                        this.showToast('简单图模式下不支持自环', 'warning');
+                        return;
+                    }
+                    
+                    const existingEdges = this.graph.getEdgesBetween(sourceNode.id, targetNode.id);
+                    if (existingEdges.length > 0) {
+                        this.showToast('简单图模式下不支持重边', 'warning');
+                        return;
+                    }
+                } else {
+                    // 检查单独的自环和重边选项
+                    const isSelfLoop = sourceNode.id === targetNode.id;
+                    const existingEdges = this.graph.getEdgesBetween(sourceNode.id, targetNode.id);
+                    
+                    if (isSelfLoop) {
+                        // 自环：先检查是否允许自环
+                        if (!this.graphFeatures.allowSelfLoops) {
+                            this.showToast('当前设置不支持自环', 'warning');
+                            return;
+                        }
+                        // 如果已存在自环，检查是否允许重边
+                        if (existingEdges.length > 0 && !this.graphFeatures.allowMultiEdges) {
+                            this.showToast('当前设置不支持重边', 'warning');
+                            return;
+                        }
+                    } else {
+                        // 非自环：检查是否允许重边
+                        if (!this.graphFeatures.allowMultiEdges && existingEdges.length > 0) {
+                            this.showToast('当前设置不支持重边', 'warning');
+                            return;
+                        }
+                    }
+                }
+                
+                try {
+                    const edge = this.graph.addEdge(sourceNode.id, targetNode.id);
+                    this.renderGraph();
+                    this.selectEdge(edge);
+                    this.saveCurrentState();
+                    this.showToast('边已添加', 'success');
+                } catch (error) {
+                    this.showToast(error.message, 'error');
+                }
+            }
+            
+            selectNode(node) {
+                this.clearSelection();
+                this.selectedNode = node;
+                this.highlightNode(node);
+                if (this.graphMode === 'dot') {
+                    this.showNodePropertiesForDotMode(node);
+                } else {
+                    this.showNodeProperties(node);
+                }
+            }
+            
+            selectEdge(edge) {
+                this.clearSelection();
+                this.selectedEdge = edge;
+                this.highlightEdge(edge);
+                this.showEdgeProperties(edge);
+            }
+            
+            highlightConnectedNodes(edge) {
+                // 高亮源节点
+                const sourceNodeElement = document.getElementById(edge.sourceId);
+                if (sourceNodeElement) {
+                    sourceNodeElement.classList.add('connected');
+                }
+                
+                // 高亮目标节点
+                const targetNodeElement = document.getElementById(edge.targetId);
+                if (targetNodeElement) {
+                    targetNodeElement.classList.add('connected');
+                }
+            }
+            
+            clearConnectedNodesHighlight() {
+                document.querySelectorAll('.node.connected').forEach(el => {
+                    el.classList.remove('connected');
+                });
+            }
+            
+            clearSelection() {
+                this.selectedNode = null;
+                this.selectedEdge = null;
+                this.edgeStart = null;
+                this.clearVisualSelection();
+                this.resetPropertyPanel();
+                this.clearConnectedNodesHighlight();
+            }
+            
+            clearVisualSelection() {
+                document.querySelectorAll('.node.selected').forEach(el => {
+                    el.classList.remove('selected');
+                });
+                document.querySelectorAll('.edge.selected').forEach(el => {
+                    el.classList.remove('selected');
+                    // 恢复原始颜色和marker
+                    const lineOrPath = el.querySelector('.edge-hit-area ~ path, .edge-hit-area ~ line, path:not(.edge-hit-area), line:not(.edge-hit-area)');
+                    if (lineOrPath) {
+                        const edgeId = el.id;
+                        const edge = this.graph.getEdge(edgeId);
+                        const originalColor = edge ? (edge.color || '#000000') : '#000000';
+                        lineOrPath.setAttribute('stroke', originalColor);
+                        lineOrPath.setAttribute('stroke-width', '4');
+                        if (lineOrPath.getAttribute('marker-end')) {
+                            // 恢复到与边颜色一致的marker
+                            const edgeColor = edge ? (edge.color || '#000000') : '#000000';
+                            const markerId = `arrowhead-${edgeColor.replace('#', '')}`;
+                            
+                            // 确保marker存在
+                            if (!document.getElementById(markerId)) {
+                                const defs = this.svgElement.querySelector('defs');
+                                const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+                                // 根据模式调整marker大小
+                                const markerSize = this.graphMode === 'circle' ? '12' : '8';
+                                marker.setAttribute('id', markerId);
+                                marker.setAttribute('markerWidth', markerSize);
+                                marker.setAttribute('markerHeight', markerSize);
+                                marker.setAttribute('refX', '8');
+                                marker.setAttribute('refY', '3');
+                                marker.setAttribute('orient', 'auto');
+                                marker.setAttribute('viewBox', '0 0 12 12');
+                                
+                                // 创建与边颜色一致的箭头
+                                const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                                arrow.setAttribute('points', '4,0 8,3 4,6');
+                                arrow.setAttribute('fill', edgeColor);
+                                
+                                marker.appendChild(arrow);
+                                defs.appendChild(marker);
+                            }
+                            
+                            lineOrPath.setAttribute('marker-end', `url(#${markerId})`);
+                        }
+                    }
+                });
+            }
+            
+            highlightNode(node) {
+                const nodeElement = document.getElementById(node.id);
+                if (nodeElement) {
+                    nodeElement.classList.add('selected');
+                }
+            }
+            
+            highlightEdge(edge) {
+                const edgeElement = document.getElementById(edge.id);
+                if (edgeElement) {
+                    edgeElement.classList.add('selected');
+                    const lineOrPath = edgeElement.querySelector('.edge-hit-area ~ path, .edge-hit-area ~ line, path:not(.edge-hit-area), line:not(.edge-hit-area)');
+                    if (lineOrPath) {
+                        lineOrPath.setAttribute('stroke', '#8b5cf6');
+                        lineOrPath.setAttribute('stroke-width', '6');
+                        
+                        // 如果是有向边，更新箭头颜色为紫色（选中状态）
+                        if (lineOrPath.getAttribute('marker-end')) {
+                            const selectedMarkerId = 'arrowhead-8b5cf6';
+                            
+                            if (!document.getElementById(selectedMarkerId)) {
+                                const defs = this.svgElement.querySelector('defs');
+                                const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+                                // 根据模式调整marker大小
+                                const markerSize = this.graphMode === 'circle' ? '12' : '8';
+                                marker.setAttribute('id', selectedMarkerId);
+                                marker.setAttribute('markerWidth', markerSize);
+                                marker.setAttribute('markerHeight', markerSize);
+                                marker.setAttribute('refX', '8');
+                                marker.setAttribute('refY', '3');
+                                marker.setAttribute('orient', 'auto');
+                                marker.setAttribute('viewBox', '0 0 12 12');
+                                
+                                // 创建紫色的选中箭头
+                                const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                                arrow.setAttribute('points', '4,0 8,3 4,6');
+                                arrow.setAttribute('fill', '#8b5cf6');
+                                
+                                marker.appendChild(arrow);
+                                defs.appendChild(marker);
+                            }
+                            lineOrPath.setAttribute('marker-end', 'url(#arrowhead-8b5cf6)');
+                        }
+                    }
+                    
+                    // 高亮相关的节点
+                    this.highlightConnectedNodes(edge);
+                }
+            }
+            
+            resetPropertyPanel() {
+                this.propertyPanel.innerHTML = `
+                    <i class="fas fa-mouse-pointer text-4xl mb-3"></i>
+                    <p>选择一个元素查看属性</p>
+                `;
+            }
+            
+            showNodeProperties(node) {
+                const colorOptions = ColorUtils.COMMON_COLORS.map(color => 
+                    `<div class="color-option ${node.color === color ? 'selected' : ''}" 
+                          style="background-color: ${color}" 
+                          data-color="${color}"></div>`
+                ).join('');
+                
+                this.propertyPanel.innerHTML = `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-sm text-gray-600">节点ID</label>
+                            <p class="font-semibold">${node.id}</p>
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-600">标签</label>
+                            <input type="text" value="${node.label}" 
+                                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                   data-property="label">
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-600">颜色</label>
+                            <div class="grid grid-cols-4 gap-2 mt-2" data-color-picker>
+                                ${colorOptions}
+                            </div>
+                            <input type="color" value="${node.color}" 
+                                   class="w-full h-10 rounded-lg cursor-pointer mt-2"
+                                   data-property="color">
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-600">位置</label>
+                            <div class="flex space-x-2">
+                                <div class="flex-1">
+                                    <label class="text-xs text-gray-500">X</label>
+                                    <input type="number" value="${Math.round(node.x)}" 
+                                           class="w-full px-2 py-1 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
+                                           data-position="x" min="0" max="1000">
+                                </div>
+                                <div class="flex-1">
+                                    <label class="text-xs text-gray-500">Y</label>
+                                    <input type="number" value="${Math.round(node.y)}" 
+                                           class="w-full px-2 py-1 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
+                                           data-position="y" min="0" max="600">
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <button id="deleteElementBtn" class="w-full px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+                                <i class="fas fa-trash mr-2"></i>删除
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                this.setupPropertyListeners(node);
+            }
+            
+            showNodePropertiesForDotMode(node) {
+                const shapeOptions = ['circle', 'triangle', 'square', 'star'].map(shape => 
+                    `<div class="shape-option ${node.shape === shape ? 'selected' : ''}" 
+                          data-shape="${shape}"
+                          style="display: inline-block; margin: 0 5px; cursor: pointer; padding: 5px; border: ${node.shape === shape ? '2px solid #8b5cf6' : '1px solid #ccc'}; border-radius: 4px;">
+                        <svg width="20" height="20" viewBox="-10 -10 20 20">
+                            ${this.getShapeSVG(node, shape)}
+                        </svg>
+                    </div>`
+                ).join('');
+                
+                this.propertyPanel.innerHTML = `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-sm text-gray-600">节点ID</label>
+                            <p class="font-semibold">${node.id}</p>
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-600">标签</label>
+                            <input type="text" value="${node.label}" 
+                                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                   data-property="label">
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-600">形状</label>
+                            <div class="mt-2" data-shape-picker>
+                                ${shapeOptions}
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-600">位置</label>
+                            <div class="flex space-x-2">
+                                <div class="flex-1">
+                                    <label class="text-xs text-gray-500">X</label>
+                                    <input type="number" value="${Math.round(node.x)}" 
+                                           class="w-full px-2 py-1 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
+                                           data-position="x" min="0" max="1000">
+                                </div>
+                                <div class="flex-1">
+                                    <label class="text-xs text-gray-500">Y</label>
+                                    <input type="number" value="${Math.round(node.y)}" 
+                                           class="w-full px-2 py-1 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
+                                           data-position="y" min="0" max="600">
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <button id="deleteElementBtn" class="w-full px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+                                <i class="fas fa-trash mr-2"></i>删除
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                this.setupPropertyListeners(node);
+                this.setupShapeListeners(node);
+            }
+            
+            getShapeSVG(node, shape) {
+                switch(shape) {
+                    case 'circle':
+                        return '<circle cx="0" cy="0" r="4" fill="#000000" />';
+                    case 'triangle':
+                        return '<polygon points="-4,2.3 0,-4 4,2.3" fill="#000000" />';
+                    case 'square':
+                        return '<rect x="-4" y="-4" width="8" height="8" fill="#000000" />';
+                    case 'star':
+                        const points = [];
+                        for (let i = 0; i < 10; i++) {
+                            const angle = Math.PI / 2 + (i * Math.PI) / 5;
+                            const radius = i % 2 === 0 ? 4 : 1.5;
+                            const x = Math.cos(angle) * radius;
+                            const y = -Math.sin(angle) * radius;
+                            points.push(x + ',' + y);
+                        }
+                        return `<polygon points="${points.join(' ')}" fill="#000000" />`;
+                    default:
+                        return '<circle cx="0" cy="0" r="4" fill="#000000" />';
+                }
+            }
+            
+            setupShapeListeners(node) {
+                const shapePicker = this.propertyPanel.querySelector('[data-shape-picker]');
+                if (shapePicker) {
+                    shapePicker.addEventListener('click', (e) => {
+                        const shapeOption = e.target.closest('.shape-option');
+                        if (shapeOption) {
+                            const shape = shapeOption.dataset.shape;
+                            this.updateElementProperty('node', node.id, 'shape', shape);
+                            
+                            // 更新选中状态
+                            shapePicker.querySelectorAll('.shape-option').forEach(opt => {
+                                opt.style.border = '1px solid #ccc';
+                            });
+                            shapeOption.style.border = '2px solid #8b5cf6';
+                        }
+                    });
+                }
+            }
+            
+            showEdgeProperties(edge) {
+                const sourceNode = this.graph.getNode(edge.sourceId);
+                const targetNode = this.graph.getNode(edge.targetId);
+                const edgeColor = edge.color || '#000000';
+                
+                const colorOptions = ColorUtils.COMMON_COLORS.map(color => 
+                    `<div class="color-option ${edgeColor === color ? 'selected' : ''}" 
+                          style="background-color: ${color}" 
+                          data-color="${color}"></div>`
+                ).join('');
+                
+                this.propertyPanel.innerHTML = `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-sm text-gray-600">边</label>
+                            <p class="font-semibold">${sourceNode ? sourceNode.label : '?'} → ${targetNode ? targetNode.label : '?'}</p>
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-600">标签</label>
+                            <input type="text" value="${edge.label || ''}" placeholder="输入边的名称"
+                                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                   data-property="label">
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-600">颜色</label>
+                            <div class="grid grid-cols-4 gap-2 mt-2" data-color-picker>
+                                ${colorOptions}
+                            </div>
+                            <input type="color" value="${edgeColor}"
+                                   class="w-full h-10 rounded-lg cursor-pointer mt-2"
+                                   data-property="color">
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-600">权重</label>
+                            <input type="number" value="${edge.weight}" min="0"
+                                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                   data-property="weight">
+                        </div>
+                        <div>
+                            <button id="deleteElementBtn" class="w-full px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+                                <i class="fas fa-trash mr-2"></i>删除
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                this.setupPropertyListeners(edge, 'edge');
+            }
+            
+            setupPropertyListeners(element, elementType = 'node') {
+                // 文本输入监听
+                this.propertyPanel.querySelectorAll('input[data-property]').forEach(input => {
+                    input.addEventListener('change', (e) => {
+                        const property = e.target.dataset.property;
+                        const value = e.target.value;
+                        this.updateElementProperty(elementType, element.id, property, value);
+                    });
+                });
+                
+                // 位置输入监听
+                this.propertyPanel.querySelectorAll('input[data-position]').forEach(input => {
+                    input.addEventListener('change', (e) => {
+                        const axis = e.target.dataset.position;
+                        const value = parseFloat(e.target.value);
+                        if (!isNaN(value) && value >= 0) {
+                            this.updateNodePosition(element, axis, value);
+                        }
+                    });
+                });
+                
+                // 颜色选择器监听
+                const colorPicker = this.propertyPanel.querySelector('[data-color-picker]');
+                if (colorPicker) {
+                    colorPicker.addEventListener('click', (e) => {
+                        const colorOption = e.target.closest('.color-option');
+                        if (colorOption) {
+                            const color = colorOption.dataset.color;
+                            this.updateElementProperty(elementType, element.id, 'color', color);
+                            
+                            // 更新选中状态
+                            colorPicker.querySelectorAll('.color-option').forEach(opt => {
+                                opt.classList.remove('selected');
+                            });
+                            colorOption.classList.add('selected');
+                        }
+                    });
+                }
+            }
+            
+            updateElementProperty(elementType, elementId, property, value) {
+                if (elementType === 'node') {
+                    const node = this.graph.getNode(elementId);
+                    if (node) {
+                        switch (property) {
+                            case 'label':
+                                node.setLabel(value);
+                                this.updateNodeLabel(node);
+                                break;
+                            case 'color':
+                                node.setColor(value);
+                                this.updateNodeColor(node);
+                                break;
+                            case 'shape':
+                                node.setShape(value);
+                                this.updateNodeShape(node);
+                                break;
+                        }
+                        this.saveCurrentState();
+                        this.showToast('属性已更新', 'success');
+                    }
+                } else if (elementType === 'edge') {
+                    const edge = this.graph.getEdge(elementId);
+                    if (edge) {
+                        switch (property) {
+                            case 'label':
+                                edge.setLabel(value);
+                                break;
+                            case 'color':
+                                edge.setColor(value);
+                                break;
+                            case 'weight':
+                                edge.setWeight(parseFloat(value) || 1);
+                                break;
+                        }
+                        this.renderGraph();
+                        this.saveCurrentState();
+                        this.showToast('属性已更新', 'success');
+                    }
+                }
+            }
+            
+            updateNodePosition(node, axis, value) {
+                if (axis === 'x') {
+                    node.setPosition(value, node.y);
+                } else {
+                    node.setPosition(node.x, value);
+                }
+                this.renderGraph();
+                this.saveCurrentState();
+                this.showToast('位置已更新', 'success');
+            }
+            
+            updateNodeLabel(node) {
+                const nodeElement = document.getElementById(node.id);
+                if (nodeElement) {
+                    const textElement = nodeElement.querySelector('text');
+                    if (textElement) {
+                        textElement.textContent = node.label;
+                    }
+                }
+            }
+            
+            updateNodeColor(node) {
+                const nodeElement = document.getElementById(node.id);
+                if (nodeElement) {
+                    const circleElement = nodeElement.querySelector('circle');
+                    const textElement = nodeElement.querySelector('text');
+                    if (circleElement) {
+                        circleElement.setAttribute('fill', node.color);
+                        circleElement.setAttribute('stroke', node.color);
+                    }
+                    if (textElement) {
+                        textElement.setAttribute('fill', ColorUtils.getContrastTextColor(node.color));
+                    }
+                }
+            }
+            
+            updateNodeShape(node) {
+                // 重新渲染整个节点以应用新的形状
+                const nodeElement = document.getElementById(node.id);
+                if (nodeElement) {
+                    nodeElement.remove();
+                    if (this.graphMode === 'dot') {
+                        this.renderNodeAsDot(node);
+                    } else {
+                        this.renderNode(node);
+                    }
+                }
+            }
+            
+            handleKeyDown(event) {
+                if (event.key === 'Delete' || event.key === 'Del') {
+                    event.preventDefault();
+                    if (this.selectedEdge) {
+                        this.graph.deleteEdge(this.selectedEdge.id);
+                        this.renderGraph();
+                        this.selectedEdge = null;
+                        this.clearVisualSelection();
+                        this.resetPropertyPanel();
+                        this.saveCurrentState();
+                        this.showToast('边已删除', 'success');
+                    } else if (this.selectedNode) {
+                        this.graph.deleteNode(this.selectedNode.id);
+                        this.renderGraph();
+                        this.selectedNode = null;
+                        this.clearVisualSelection();
+                        this.resetPropertyPanel();
+                        this.saveCurrentState();
+                        this.showToast('节点已删除', 'success');
+                    }
+                }
+            }
+            
+            // ==================== 节点拖拽处理 ====================
+            handleNodeMouseDownDirect(event, node) {
+                if (this.currentMode === 'addNode') {
+                    this.isDragging = false;
+                    this.draggedNode = node;
+                    event.preventDefault();
+                    
+                    // 拖拽开始时选中节点并显示属性
+                    this.selectNode(node);
+                    
+                    // 在 SVG 上监听 mousemove 和 mouseup
+                    const svgHandler = (e) => this.handleSvgMouseMove(e);
+                    const endHandler = (e) => this.handleSvgMouseUp(e);
+                    
+                    this.svgElement.addEventListener('mousemove', svgHandler);
+                    this.svgElement.addEventListener('mouseleave', endHandler);
+                    document.addEventListener('mouseup', endHandler);
+                    
+                    // 保存清理函数
+                    this.cleanupDragListeners = () => {
+                        this.svgElement.removeEventListener('mousemove', svgHandler);
+                        this.svgElement.removeEventListener('mouseleave', endHandler);
+                        document.removeEventListener('mouseup', endHandler);
+                    };
+                }
+            }
+            
+            handleSvgMouseMove(event) {
+                if (this.draggedNode && this.currentMode === 'addNode') {
+                    const rect = this.svgElement.getBoundingClientRect();
+                    const x = event.clientX - rect.left;
+                    const y = event.clientY - rect.top;
+                    
+                    // 检查是否开始拖拽
+                    if (!this.isDragging) {
+                        const distance = Math.sqrt(
+                            Math.pow(x - this.draggedNode.x, 2) + 
+                            Math.pow(y - this.draggedNode.y, 2)
+                        );
+                        if (distance > 3) {
+                            this.isDragging = true;
+                        }
+                    }
+                    
+                    if (this.isDragging) {
+                        this.draggedNode.setPosition(x, y);
+                        const nodeElement = document.getElementById(this.draggedNode.id);
+                        if (nodeElement) {
+                            nodeElement.setAttribute('transform', `translate(${x}, ${y})`);
+                            this.renderEdges(); // 只更新边，不重新渲染所有节点
+                        }
+                        
+                        // 实时更新属性面板中的位置信息
+                        if (this.selectedNode && this.selectedNode.id === this.draggedNode.id) {
+                            const xInput = this.propertyPanel.querySelector('input[data-position="x"]');
+                            const yInput = this.propertyPanel.querySelector('input[data-position="y"]');
+                            if (xInput) xInput.value = Math.round(x);
+                            if (yInput) yInput.value = Math.round(y);
+                        }
+                    }
+                }
+            }
+            
+            handleSvgMouseUp(event) {
+                if (this.cleanupDragListeners) {
+                    this.cleanupDragListeners();
+                    this.cleanupDragListeners = null;
+                }
+                
+                if (this.isDragging && this.draggedNode) {
+                    // 拖拽结束后选中该节点并显示属性
+                    this.selectNode(this.draggedNode);
+                    this.saveCurrentState();
+                }
+                this.isDragging = false;
+                this.draggedNode = null;
+            }
+            
+            // ==================== 渲染方法 ====================
+            renderGraph() {
+                this.nodesGroup.innerHTML = '';
+                this.edgesGroup.innerHTML = '';
+                
+                this.graph.edges.forEach(edge => {
+                    this.renderEdge(edge);
+                });
+                
+                this.graph.nodes.forEach(node => {
+                    this.renderNode(node);
+                });
+            }
+            
+            renderNode(node) {
+                if (this.graphMode === 'dot') {
+                    this.renderNodeAsDot(node);
+                    return;
+                }
+                
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                g.setAttribute('id', node.id);
+                g.setAttribute('class', 'node');
+                g.setAttribute('transform', `translate(${node.x}, ${node.y})`);
+                
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('r', '20');
+                circle.setAttribute('fill', node.color);
+                circle.setAttribute('stroke', node.color);
+                circle.setAttribute('stroke-width', '2');
+                
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('dy', '5');
+                text.setAttribute('fill', ColorUtils.getContrastTextColor(node.color));
+                text.setAttribute('font-family', 'Arial, sans-serif');
+                text.setAttribute('font-size', '14');
+                text.textContent = node.label;
+                
+                g.appendChild(circle);
+                g.appendChild(text);
+                
+                // 添加事件监听
+                g.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.handleNodeClick(e, node);
+                });
+                
+                g.addEventListener('mousedown', (e) => {
+                    this.handleNodeMouseDownDirect(e, node);
+                });
+                
+                this.nodesGroup.appendChild(g);
+            }
+            
+            renderNodeAsDot(node) {
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                g.setAttribute('id', node.id);
+                g.setAttribute('class', 'node');
+                g.setAttribute('transform', `translate(${node.x}, ${node.y})`);
+                
+                // 根据形状创建不同的图形
+                let shapeElement;
+                switch(node.shape) {
+                    case 'triangle':
+                        shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                        shapeElement.setAttribute('points', '-5,2.9 0,-5 5,2.9');
+                        shapeElement.setAttribute('fill', '#000000');
+                        shapeElement.setAttribute('stroke', '#000000');
+                        shapeElement.setAttribute('stroke-width', '1');
+                        break;
+                    case 'square':
+                        shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                        shapeElement.setAttribute('x', '-5');
+                        shapeElement.setAttribute('y', '-5');
+                        shapeElement.setAttribute('width', '10');
+                        shapeElement.setAttribute('height', '10');
+                        shapeElement.setAttribute('fill', '#000000');
+                        shapeElement.setAttribute('stroke', '#000000');
+                        shapeElement.setAttribute('stroke-width', '1');
+                        break;
+                    case 'star':
+                        const starPoints = [];
+                        for (let i = 0; i < 10; i++) {
+                            const angle = Math.PI / 2 + (i * Math.PI) / 5;
+                            const radius = i % 2 === 0 ? 5 : 2;
+                            const x = Math.cos(angle) * radius;
+                            const y = -Math.sin(angle) * radius;
+                            starPoints.push(`${x},${y}`);
+                        }
+                        shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                        shapeElement.setAttribute('points', starPoints.join(' '));
+                        shapeElement.setAttribute('fill', '#000000');
+                        shapeElement.setAttribute('stroke', '#000000');
+                        shapeElement.setAttribute('stroke-width', '1');
+                        break;
+                    case 'circle':
+                    default:
+                        shapeElement = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                        shapeElement.setAttribute('r', '5');
+                        shapeElement.setAttribute('fill', '#000000');
+                        shapeElement.setAttribute('stroke', '#000000');
+                        shapeElement.setAttribute('stroke-width', '1');
+                }
+                
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('text-anchor', 'start');
+                text.setAttribute('dx', '8');
+                text.setAttribute('dy', '-8');
+                text.setAttribute('fill', '#000000');
+                text.setAttribute('font-family', 'Arial, sans-serif');
+                text.setAttribute('font-size', '18');
+                text.setAttribute('font-weight', 'normal');
+                text.textContent = node.label;
+                
+                g.appendChild(shapeElement);
+                g.appendChild(text);
+                
+                // 添加事件监听
+                g.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.handleNodeClick(e, node);
+                });
+                
+                g.addEventListener('mousedown', (e) => {
+                    this.handleNodeMouseDownDirect(e, node);
+                });
+                
+                this.nodesGroup.appendChild(g);
+            }
+            
+            handleNodeClick(event, node) {
+                event.stopPropagation();
+                
+                if (this.currentMode === 'addEdge') {
+                    if (!this.edgeStart) {
+                        this.edgeStart = node;
+                        this.showToast('选择第二个节点创建边', 'info');
+                    } else {
+                        this.addEdge(this.edgeStart, node);
+                        this.edgeStart = null;
+                    }
+                } else if (this.currentMode === 'addNode') {
+                    if (this.isDragging) return;
+                    this.selectNode(node);
+                } else if (this.currentMode === 'delete') {
+                    this.graph.deleteNode(node.id);
+                    this.renderGraph();
+                    this.clearSelection();
+                    this.saveCurrentState();
+                    this.showToast('节点已删除', 'success');
+                }
+            }
+            
+            renderEdge(edge) {
+                const sourceNode = this.graph.getNode(edge.sourceId);
+                const targetNode = this.graph.getNode(edge.targetId);
+                
+                if (!sourceNode || !targetNode) return;
+                
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                g.setAttribute('id', edge.id);
+                g.setAttribute('class', 'edge');
+                
+                if (sourceNode.id === targetNode.id) {
+                    this.renderSelfLoop(g, sourceNode, edge);
+                } else {
+                    this.renderRegularEdge(g, sourceNode, targetNode, edge);
+                }
+                
+                g.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (this.currentMode === 'addNode' || this.currentMode === 'addEdge') {
+                        this.selectEdge(edge);
+                    } else if (this.currentMode === 'delete') {
+                        this.graph.deleteEdge(edge.id);
+                        this.renderGraph();
+                        this.clearSelection();
+                        this.saveCurrentState();
+                        this.showToast('边已删除', 'success');
+                    }
+                });
+                
+                this.edgesGroup.appendChild(g);
+            }
+            
+            renderRegularEdge(g, sourceNode, targetNode, edge) {
+                const dx = targetNode.x - sourceNode.x;
+                const dy = targetNode.y - sourceNode.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                // 根据模式调整半径：圆点模式20，微点模式5
+                const radius = this.graphMode === 'circle' ? 20 : 5;
+                
+                if (distance <= 2 * radius) return;
+                
+                const unitX = dx / distance;
+                const unitY = dy / distance;
+                
+                // 计算同方向和反方向的边数量，用于处理重边
+                const sourceId = sourceNode.id;
+                const targetId = targetNode.id;
+                
+                const sameDirectionEdges = this.graph.edges.filter(e => 
+                    e.sourceId === sourceId && e.targetId === targetId
+                );
+                const reverseDirectionEdges = this.graph.edges.filter(e => 
+                    !this.graph.directed && e.sourceId === targetId && e.targetId === sourceId
+                );
+                
+                const totalSameDirection = sameDirectionEdges.length + reverseDirectionEdges.length;
+                const edgeIndex = sameDirectionEdges.findIndex(e => e.id === edge.id);
+                const reverseIndex = reverseDirectionEdges.findIndex(e => e.id === edge.id);
+                const actualIndex = edgeIndex >= 0 ? edgeIndex : reverseIndex;
+                
+                const startX = sourceNode.x + unitX * radius;
+                const startY = sourceNode.y + unitY * radius;
+                const endX = targetNode.x - unitX * radius;
+                const endY = targetNode.y - unitY * radius;
+                
+                let pathD;
+                let labelX, labelY;
+                
+                // 法线方向（垂直于边的方向）
+                const normalX = -unitY;
+                const normalY = unitX;
+                
+                if (totalSameDirection === 1) {
+                    // 单条边：直线
+                    pathD = `M ${startX} ${startY} L ${endX} ${endY}`;
+                    labelX = (startX + endX) / 2;
+                    labelY = (startY + endY) / 2;
+                } else {
+                    // 重边：用弧形
+                    let curveOffset = 0;
+                    if (actualIndex > 0) {
+                        const level = Math.ceil(actualIndex / 2);
+                        const sign = (actualIndex % 2 === 1) ? 1 : -1;
+                        curveOffset = sign * level * 50;
+                    }
+                    
+                    if (curveOffset === 0) {
+                        pathD = `M ${startX} ${startY} L ${endX} ${endY}`;
+                        labelX = (startX + endX) / 2;
+                        labelY = (startY + endY) / 2;
+                    } else {
+                        // 二次贝塞尔曲线的控制点
+                        const midX = (startX + endX) / 2 + normalX * curveOffset;
+                        const midY = (startY + endY) / 2 + normalY * curveOffset;
+                        
+                        pathD = `M ${startX} ${startY} Q ${midX} ${midY} ${endX} ${endY}`;
+                        // 标签位置在曲线的 1/4 处
+                        labelX = (startX + 2 * midX + endX) / 4;
+                        labelY = (startY + 2 * midY + endY) / 4;
+                    }
+                }
+                
+                let lineElement;
+                if (this.graph.directed) {
+                    lineElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    lineElement.setAttribute('d', pathD);
+                    lineElement.setAttribute('fill', 'none');
+                    lineElement.setAttribute('stroke', edge.color || '#000000');
+                    lineElement.setAttribute('stroke-width', '4');
+                    
+                    // 为每种颜色动态创建marker
+                    const edgeColor = edge.color || '#000000';
+                    const markerId = `arrowhead-${edgeColor.replace('#', '')}`;
+                    
+                    // 检查是否已存在该颜色的marker
+                    if (!document.getElementById(markerId)) {
+                        const defs = this.svgElement.querySelector('defs');
+                        const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+                        // 根据模式调整marker大小
+                        const markerSize = this.graphMode === 'circle' ? '12' : '8';
+                        marker.setAttribute('id', markerId);
+                        marker.setAttribute('markerWidth', markerSize);
+                        marker.setAttribute('markerHeight', markerSize);
+                        marker.setAttribute('refX', '8');
+                        marker.setAttribute('refY', '3');
+                        marker.setAttribute('orient', 'auto');
+                        marker.setAttribute('viewBox', '0 0 12 12');
+                        
+                        // 创建与边颜色一致的箭头
+                        const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                        arrow.setAttribute('points', '4,0 8,3 4,6');
+                        arrow.setAttribute('fill', edgeColor);
+                        
+                        marker.appendChild(arrow);
+                        defs.appendChild(marker);
+                    }
+                    
+                    lineElement.setAttribute('marker-end', `url(#${markerId})`);
+                } else {
+                    lineElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    lineElement.setAttribute('d', pathD);
+                    lineElement.setAttribute('fill', 'none');
+                    lineElement.setAttribute('stroke', edge.color || '#000000');
+                    lineElement.setAttribute('stroke-width', '4');
+                }
+                
+                
+                // 添加不可见的宽点击区域
+                const hitArea = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                hitArea.setAttribute('d', pathD);
+                hitArea.setAttribute('class', 'edge-hit-area');
+                g.appendChild(hitArea);
+                
+                g.appendChild(lineElement);
+                
+                if (edge.label) {
+                    this.addEdgeLabel(g, labelX, labelY, edge.label);
+                }
+            }
+            
+            renderSelfLoop(g, node, edge) {
+                // 获取节点的所有自环并计算当前边的索引
+                const selfLoops = this.graph.edges.filter(e => e.sourceId === node.id && e.targetId === node.id);
+                const edgeIndex = selfLoops.findIndex(e => e.id === edge.id);
+                
+                // 根据模式调整偏移量：圆点模式20，微点模式0
+                const offset = this.graphMode === 'circle' ? 20 : 0;
+                // 根据自环索引调整半径，实现重自环分离显示
+                const loopRadius = 25 + edgeIndex * 15;
+                
+                // 自环路径：从节点顶部左侧出发，画一个圆弧回到顶部右侧
+                const startAngle = -Math.PI * 0.75;
+                const endAngle = -Math.PI * 0.25;
+                
+                const sx = node.x + offset * Math.cos(startAngle);
+                const sy = node.y + offset * Math.sin(startAngle);
+                const ex = node.x + offset * Math.cos(endAngle);
+                const ey = node.y + offset * Math.sin(endAngle);
+                
+                // 控制点在节点上方
+                const cpx = node.x;
+                const cpy = node.y - 20 - loopRadius * 2;
+                const cp1x = sx - loopRadius;
+                const cp1y = sy - loopRadius * 1.5;
+                const cp2x = ex + loopRadius;
+                const cp2y = ey - loopRadius * 1.5;
+                
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', `M ${sx} ${sy} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${ex} ${ey}`);
+                path.setAttribute('fill', 'none');
+                path.setAttribute('stroke', edge.color || '#000000');
+                path.setAttribute('stroke-width', '2');
+                
+                if (this.graph.directed) {
+                    // 为自环边创建与颜色一致的marker
+                    const edgeColor = edge.color || '#000000';
+                    const markerId = `arrowhead-${edgeColor.replace('#', '')}`;
+                    
+                    // 检查是否已存在该颜色的marker
+                    if (!document.getElementById(markerId)) {
+                        const defs = this.svgElement.querySelector('defs');
+                        const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+                        marker.setAttribute('id', markerId);
+                        marker.setAttribute('markerWidth', '8');
+                        marker.setAttribute('markerHeight', '8');
+                        marker.setAttribute('refX', '6');
+                        marker.setAttribute('refY', '3');
+                        marker.setAttribute('orient', 'auto');
+                        marker.setAttribute('viewBox', '0 0 12 12');
+                        
+                        // 创建与边颜色一致的箭头
+                        const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                        arrow.setAttribute('points', '4,0 8,3 4,6');
+                        arrow.setAttribute('fill', edgeColor);
+                        
+                        marker.appendChild(arrow);
+                        defs.appendChild(marker);
+                    }
+                    
+                    path.setAttribute('marker-end', `url(#${markerId})`);
+                }
+                
+                g.appendChild(path);
+                
+                if (edge.label) {
+                    const labelX = node.x;
+                    const labelY = node.y - 20 - loopRadius * 0.5;
+                    this.addEdgeLabel(g, labelX, labelY, edge.label);
+                }
+            }
+            
+            addEdgeLabel(g, x, y, label) {
+                // 创建标签背景板
+                const labelBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                labelBg.setAttribute('x', x - 15);
+                labelBg.setAttribute('y', y - 10);
+                labelBg.setAttribute('width', '30');
+                labelBg.setAttribute('height', '20');
+                labelBg.setAttribute('rx', '4');
+                labelBg.setAttribute('fill', 'white');
+                labelBg.setAttribute('stroke', '#e5e7eb');
+                labelBg.setAttribute('class', 'edge-label-bg');
+                
+                // 创建标签文字
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', x);
+                text.setAttribute('y', y + 4);
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('fill', '#374151');
+                text.setAttribute('font-family', 'Arial, sans-serif');
+                text.setAttribute('font-size', '12');
+                text.setAttribute('class', 'edge-label');
+                text.textContent = label;
+                
+                g.appendChild(labelBg);
+                g.appendChild(text);
+                
+                // 异步调整背景板大小以适应文字
+                requestAnimationFrame(() => {
+                    try {
+                        const bbox = text.getBBox();
+                        if (bbox.width > 0) {
+                            labelBg.setAttribute('x', bbox.x - 4);
+                            labelBg.setAttribute('y', bbox.y - 2);
+                            labelBg.setAttribute('width', bbox.width + 8);
+                            labelBg.setAttribute('height', bbox.height + 4);
+                        }
+                    } catch(e) {}
+                });
+            }
+            
+            renderEdges() {
+                this.edgesGroup.innerHTML = '';
+                this.graph.edges.forEach(edge => {
+                    this.renderEdge(edge);
+                });
+            }
+            
+            // ==================== 导出/导入功能 ====================
+            showExportModal() {
+                this.showToast('离线版暂不支持完整导出功能', 'warning');
+            }
+            
+            exportJSON() {
+                const data = this.graph.toJSON();
+                const dataStr = JSON.stringify(data, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'graph.json';
+                a.click();
+                URL.revokeObjectURL(url);
+                this.showToast('JSON已导出', 'success');
+            }
+            
+            importJSON(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        this.graph = Graph.fromJSON(data);
+                        this.graphType = this.graph.directed ? 'directed' : 'undirected';
+                        this.renderGraph();
+                        this.clearSelection();
+                        this.saveCurrentState();
+                        this.showToast('JSON已导入', 'success');
+                    } catch (error) {
+                        this.showToast('导入失败：无效的JSON格式', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            }
+            
+            // ==================== 其他功能 ====================
+            clearCanvas() {
+                this.graph.clear();
+                this.renderGraph();
+                this.clearSelection();
+                this.saveCurrentState();
+                this.showToast('画布已清空', 'success');
+            }
+            
+            toggleGraphMode() {
+                this.graphMode = this.graphMode === 'circle' ? 'dot' : 'circle';
+                const btn = document.getElementById('toggleModeBtn');
+                btn.innerHTML = this.graphMode === 'circle' ? 
+                    '<i class="fas fa-sync-alt mr-2"></i>切换到微点模式' : 
+                    '<i class="fas fa-sync-alt mr-2"></i>切换到圆点模式';
+                this.renderGraph();
+                this.saveCurrentState();
+            }
+            
+            // ==================== 状态管理 ====================
+            saveCurrentState() {
+                StorageUtils.save('graph', this.graph.toJSON());
+                StorageUtils.save('settings', {
+                    graphType: this.graphType,
+                    graphFeatures: this.graphFeatures,
+                    graphMode: this.graphMode
+                });
+            }
+            
+            loadSavedState() {
+                const savedGraph = StorageUtils.load('graph');
+                if (savedGraph) {
+                    try {
+                        this.graph = Graph.fromJSON(savedGraph);
+                    } catch (error) {
+                        console.error('加载保存状态失败:', error);
+                    }
+                }
+                
+                const savedSettings = StorageUtils.load('settings');
+                if (savedSettings) {
+                    this.graphType = savedSettings.graphType || 'undirected';
+                    this.graphFeatures = savedSettings.graphFeatures || {
+                        simple: true,
+                        allowMultiEdges: false,
+                        allowSelfLoops: false
+                    };
+                    this.graphMode = savedSettings.graphMode || 'circle';
+                    
+                    // 更新UI状态
+                    document.querySelector(`input[name="graphType"][value="${this.graphType}"]`).checked = true;
+                    document.getElementById('simpleGraph').checked = this.graphFeatures.simple;
+                    document.getElementById('allowMultiEdges').checked = this.graphFeatures.allowMultiEdges;
+                    document.getElementById('allowSelfLoops').checked = this.graphFeatures.allowSelfLoops;
+                    this.updateFeatureControls();
+                }
+                
+                this.renderGraph();
+            }
+            
+            showToast(message, type = 'info') {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = `toast px-4 py-3 rounded-lg text-white font-medium transform transition-all duration-300 ${
+                    type === 'success' ? 'bg-green-500' :
+                    type === 'error' ? 'bg-red-500' :
+                    type === 'warning' ? 'bg-yellow-500' :
+                    'bg-blue-500'
+                }`;
+                toast.textContent = message;
+                
+                container.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.parentNode.removeChild(toast);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+        }
+
+        // ==================== 初始化应用 ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            window.graphEditor = new GraphEditor();
+        });
+    </script>
+</body>
+</html>
