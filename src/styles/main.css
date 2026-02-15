@@ -1,0 +1,169 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#canvas {
+    cursor: crosshair;
+    background: linear-gradient(to bottom right, #f8fafc, #e2e8f0);
+    background-image: 
+        radial-gradient(circle, #cbd5e1 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+.mode-btn {
+    transition: all 0.3s ease;
+}
+
+.mode-btn:hover {
+    transform: translateY(-2px);
+}
+
+.mode-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    transform: scale(1.05);
+}
+
+.node {
+    cursor: move;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    transition: filter 0.2s;
+}
+
+.node:hover {
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+}
+
+.node.selected {
+    filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.8));
+}
+
+.edge {
+    stroke-width: 4;
+    fill: none;
+    transition: stroke-width 0.2s;
+}
+
+.edge:hover {
+    stroke-width: 6;
+}
+
+.edge.no-hover:hover {
+    stroke-width: 4;
+}
+
+.edge.selected {
+    stroke-width: 6;
+    filter: drop-shadow(0 0 6px rgba(139, 92, 246, 0.8));
+}
+
+.edge-label {
+    font-size: 12px;
+    fill: #374151;
+    pointer-events: none;
+    user-select: none;
+}
+
+.edge-hit-area {
+    stroke-width: 16;
+    stroke: transparent;
+    fill: none;
+    cursor: pointer;
+    pointer-events: stroke;
+}
+
+.arrow-marker {
+    fill: inherit;
+    stroke: inherit;
+}
+
+.toast {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.context-menu {
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.color-option {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    border: 2px solid transparent;
+}
+
+.color-option:hover {
+    transform: scale(1.1);
+    border-color: #8b5cf6;
+}
+
+.color-option.selected {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+}
+
+.export-modal {
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.bg-option {
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+}
+
+.bg-option:hover {
+    transform: scale(1.05);
+}
+
+.bg-option.selected {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+}
+
+.shape-option {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    border: 1px solid #ccc;
+    margin: 0 5px;
+}
+
+.shape-option:hover {
+    transform: scale(1.1);
+}
+
+.shape-option.selected {
+    transform: scale(1.1);
+    border: 2px solid #8b5cf6;
+}
